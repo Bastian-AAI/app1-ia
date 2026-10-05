@@ -6,7 +6,6 @@ import torchvision.transforms as transforms
 import torch.nn.functional as F
 import torch
 import numpy
-import cv2
 
 def transform_image(image_bytes):
     image_bytes2 = io.BytesIO(image_bytes)
