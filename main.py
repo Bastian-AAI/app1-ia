@@ -6,6 +6,9 @@ from flask import Flask, jsonify, request
 
 @app.route('/ejercicio2/app1-ia/predict', methods=['POST'])
 def predict():
+    api_key = request.headers.get('X-API-KEY')
+    if api_key != 'Secreto_ejercicio2_202608101300':
+        return jsonify({'error': 'Acceso no autorizado'}), 403
     file = request.files['file']
     file_bytes = file.read()
     log_print("recibo {} bytes".format(len(file_bytes)))
