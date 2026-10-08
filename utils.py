@@ -8,6 +8,7 @@ import torch
 import numpy
 import threading
 from datetime import datetime
+import time
 
 def log_print(message):
     time = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
@@ -29,18 +30,19 @@ def transform_image(image_bytes):
 
 
 def get_prediction(image_bytes):
+    t0 = time.time()
     log_print("leyendo imagen")
     image_tensor = transform_image(image_bytes)
     log_print("forward de tensor {} en la red".format(image_tensor.size()))
     outputs = model.forward(image_tensor)
     probabilities = F.softmax(outputs, dim=1)
-    score_tensor, position_tensor = probabilities.max(1)
-    score = score_tensor.item()
-    position = position_tensor.item()
-    log_print("max-position: {} max-score: {:.3f}".format(position, score))
-    array = imagenet_class_index[str(position)]
-    clase_id = array[0]
-    clase_nombre = array[1]
-    log_print("clase: {} {}".format(clase_id, clase_nombre))
-    # ¿cuanto tiempo demoró en predecir? devolverlo
-    return clase_id, clase_nombre
+    top_scores, top_positions = torch.topk(probabilities, 3)
+    tiempo = round(time.time() - t0, 3)
+    clases = []
+    for i in range(3):
+        score = round(top_scores[0][i].item(), 3)
+        position = str(top_positions[0][i].item())
+        clase_id, clase_nombre = imagenet_class_index[position]
+        log_print("clase: {} {} score: {:.3f}".format(clase_id, clase_nombre, score))
+        clases.append({'clase_id': clase_id, 'clase_nombre': clase_nombre, 'score': score})
+    return clases, tiempo

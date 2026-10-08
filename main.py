@@ -9,8 +9,11 @@ def predict():
     file = request.files['file']
     file_bytes = file.read()
     log_print("recibo {} bytes".format(len(file_bytes)))
-    clase_id, clase_nombre = get_prediction(image_bytes=file_bytes)
-    json_respuesta = {'clase_id': clase_id, 'clase_nombre': clase_nombre}
+    clases, tiempo = get_prediction(image_bytes=file_bytes)
+    json_respuesta = {
+        'clases': clases,
+        'tiempo': tiempo
+    }
     log_print("responder: {}".format(json_respuesta))
     return jsonify(json_respuesta)
 
