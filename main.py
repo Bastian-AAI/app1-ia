@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*- 
 from app import app
-from utils import get_prediction
+from utils import get_prediction, log_print
 from flask import Flask, jsonify, request
 
 
@@ -8,10 +8,10 @@ from flask import Flask, jsonify, request
 def predict():
     file = request.files['file']
     file_bytes = file.read()
-    print("recibo {} bytes".format(len(file_bytes)))
+    log_print("recibo {} bytes".format(len(file_bytes)))
     clase_id, clase_nombre = get_prediction(image_bytes=file_bytes)
     json_respuesta = {'clase_id': clase_id, 'clase_nombre': clase_nombre}
-    print("responder: {}".format(json_respuesta))
+    log_print("responder: {}".format(json_respuesta))
     return jsonify(json_respuesta)
 
 
